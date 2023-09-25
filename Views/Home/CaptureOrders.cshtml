@@ -1,0 +1,75 @@
+﻿<link href="~/css/tailwind.min.css" rel="stylesheet">
+
+@{
+    ViewData["Title"] = "Capture Orders";
+}
+
+<div class="py-8">
+    <form id="captureordersForm" class="max-w-md mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Capture Orders</h1>
+        <div class="mb-4">
+            <label for="Date" class="block text-gray-700 font-semibold">Date</label>
+            <input type="text" id="Date" placeholder="Enter order date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+        </div>
+        <div class="mb-4">
+            <label for="Total" class="block text-gray-700 font-semibold">Total</label>
+            <input type="text" id="Total" placeholder="Enter order total" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+        </div>
+        <div class="mb-4">
+            <label for="Lines" class="block text-gray-700 font-semibold">Lines</label>
+            <textarea id="Lines" placeholder="Enter order lines" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required></textarea>
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline-blue active:bg-blue-800">Capture Order</button>
+    </form>
+</div>
+
+<div id="successModal" class="modal fixed inset-0 flex items-center justify-center hidden">
+    <div class="modal-content bg-white rounded-lg p-4">
+        <p class="text-green-500 font-semibold text-xl">Order Captured Successfully!</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById("captureordersForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const Date = document.getElementById("Date").value;
+        const Total = document.getElementById("Total").value;
+        const Lines = document.getElementById("Lines").value;
+
+        const formData = {
+            Date: Date,
+            Total: Total,
+            Lines: Lines
+        };
+
+        fetch("/api/order/Submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById("Date").value = "";
+                document.getElementById("Total").value = "";
+                document.getElementById("Lines").value = "";
+
+                const successModal = document.getElementById("successModal");
+                successModal.style.display = "block";
+
+                setTimeout(function () {
+                    successModal.style.display = "none";
+                }, 2000);
+
+                console.log("Form data submitted successfully.");
+            } else {
+                console.error("Error submitting form data.");
+            }
+        })
+        .catch(error => {
+            console.error("Network error:", error);
+        });
+    });
+</script>

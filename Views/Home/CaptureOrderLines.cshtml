@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Capture Order Lines";
+}
+
+<link href="~/css/tailwind.min.css" rel="stylesheet">
+<div class="py-8">
+    <form id="orderLineForm" class="max-w-md mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Capture Order Lines</h1>
+        <div class="mb-4">
+            <label for="Product" class="block text-gray-700 font-semibold">Product</label>
+            <input type="text" id="Product" placeholder="Enter product name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-4">
+            <label for="Quantity" class="block text-gray-700 font-semibold">Quantity</label>
+            <input type="text" id="Quantity" placeholder="Enter product quantity" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline-blue active:bg-blue-800">Capture Order Line</button>
+    </form>
+</div>
+
+<div id="successModal" class="modal fixed inset-0 flex items-center justify-center hidden">
+    <div class="modal-content bg-white rounded-lg p-4">
+        <p class="text-green-500 font-semibold text-xl">Order Line Captured Successfully!</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById("orderLineForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const product = document.getElementById("Product").value;
+        const quantity = document.getElementById("Quantity").value;
+
+        // Check if the product and quantity are non-empty
+        if (!product || !quantity) {
+            console.error("Product and Quantity are required.");
+            return;
+        }
+
+        const formData = {
+            product: product,
+            quantity: quantity
+        };
+
+        fetch("/api/orderline/Submit", { 
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById("Product").value = "";
+                document.getElementById("Quantity").value = "";
+
+                const successModal = document.getElementById("successModal");
+                successModal.style.display = "block";
+
+                setTimeout(function () {
+                    successModal.style.display = "none";
+                }, 2000);
+
+                console.log("Form data submitted successfully.");
+            } else {
+                console.error("Error submitting form data.");
+            }
+        })
+        .catch(error => {
+            console.error("Network error:", error);
+        });
+    });
+</script>

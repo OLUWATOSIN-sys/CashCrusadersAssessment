@@ -1,0 +1,43 @@
+﻿
+
+@{
+    ViewData["Title"] = "Sales so far today";
+}
+<link href="~/css/tailwind.min.css" rel="stylesheet">
+<br><br><br>
+<body>
+    <center><h1 class="text-2xl font-bold mb-4">Sales Order so far today</h1>
+    
+ 
+  
+    <p>is</p>
+
+
+   <div id="salesCount" class="text-9xl font-bold text-blue-500">Loading...</div>
+<center><h1 class="text-1xl font-bold text-green-500 mb-4"><i>Sales</i></h1>
+  </center>
+    <script>
+
+        async function fetchSalesCount() {
+            try {
+                const response = await fetch("/api/sales/TotalSalesCount");
+                if (response.ok) {
+                    const totalSalesCount = await response.json();
+                    const salesCountElement = document.getElementById("salesCount");
+                    salesCountElement.textContent = totalSalesCount;
+                } else {
+                    console.error("Error fetching sales count.");
+                }
+            } catch (error) {
+                console.error("Network error:", error);
+            }
+        }
+
+    
+        fetchSalesCount();
+
+
+        setInterval(fetchSalesCount, 60000); 
+    </script>
+</body>
+
